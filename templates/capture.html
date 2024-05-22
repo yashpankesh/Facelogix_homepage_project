@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload Image</title>
+<style>
+    .box {
+        width: 100%;
+        margin-top: 100px;
+        margin-left: 30px;
+        background-color: rgba(22, 34, 57, 0.95);
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        color: white;
+        font-family: 'Montserrat', sans-serif;
+        text-align: center;
+    }
+
+    h1 {
+        padding: 10px;
+    }
+
+    .enrollment-input {
+        margin-bottom: 10px;
+        padding: 5px;
+        border-radius: 5px;
+        border: none;
+        outline: none;
+    }
+
+    .capture-button {
+        padding: 10px 20px;
+        border-radius: 5px;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+    <div class="box">
+        <h1>😁</h1>
+        <input type="text" id="enrollmentInput" class="enrollment-input" placeholder="Enter Enrollment Number" value="{{ enrollment_number }}">
+
+        {% comment %} <input type="text" id="enrollmentInput" class="enrollment-input" placeholder="Enter Enrollment Number"> {% endcomment %}
+        <button id="runCaptureButton" class="capture-button">Capture Image</button>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#runCaptureButton').click(function () {
+                // Get the CSRF token from the cookie
+                var csrftoken = getCookie('csrftoken');
+
+                // Get the enrollment number input value
+                var enrollmentNumber = $('#enrollmentInput').val();
+
+                // Make sure the enrollment number is not empty
+                if (enrollmentNumber.trim() === '') {
+                    alert('Please enter your enrollment number.');
+                    return;
+                }
+
+                // Send AJAX request to capture image
+                $.ajax({
+                    url: '{% url "run_capture" %}',
+                    type: 'POST',
+                    data: { enrollment_number: enrollmentNumber },
+                    headers: { 'X-CSRFToken': csrftoken }, // Include the CSRF token in the request headers
+                    success: function (response) {
+                        console.log(response);
+                        alert('Image captured and saved successfully!');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(xhr.responseText);
+                        alert('Error capturing image. Please try again.');
+                    }
+                });
+            });
+        });
+
+        // Function to get the CSRF token from the cookie
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html>
+
+

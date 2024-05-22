@@ -1,0 +1,116 @@
+{% include "header.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<title>Profile and Attendance</title>
+<style>
+    body {
+        margin-top:80px;
+        padding: 0;
+        background-color: rgba(22,34,57,0.95);
+        font-family: 'Montserrat', sans-serif;
+    }
+    .container {
+        display: flex;
+        height: 90vh;
+        margin:0;
+        padding:0;
+    }
+    .left-side {
+        width: 30%;
+        background-color: rgba(22,34,57,0.95);
+        padding: 20px;
+    }
+    .right-side {
+        width: 70%;
+        padding: 20px;
+    }
+    .module:hover {
+        border-color: orange;
+
+    }
+    .module {
+        padding: 10px 15px;
+        margin-left:10px;
+        font-size: 20px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 700;
+        color: #fff;
+        border: 2px solid transparent;
+        transition: all 0.5s;
+        cursor:pointer;
+    }
+    .module p {
+        margin-top: 0;
+    }
+
+    .rs{
+       
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-side">
+            {% comment %} <div class="module">
+                <p>Profile</p>
+                <!-- Your settings form goes here -->
+            </div> {% endcomment %}
+            <div class="module">
+                <p id="attendance-link">Attendance </p>
+            </div>
+            <div class="module">
+                <p id="upload-image">Capture Image</p>
+                <!-- Your image upload form goes here -->
+            </div>
+            
+            <div class="module">
+                <p>Settings</p>
+                <!-- Your settings form goes here -->
+            </div>
+        </div>
+        <div class="right-side">
+            {% if user.is_authenticated %}
+                <div class="module">
+                    <p>Welcome to FaceLogix, {{ user.username }}</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#attendance-link').click(function() {
+        $.ajax({
+            url: "{% url 'attendance' %}",
+            type: 'GET',
+            success: function(response) {
+                $('.right-side').html(response);
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+            }
+        });
+    });
+});
+
+$('#upload-image').click(function() {
+    $.ajax({
+        url: "{% url 'capture' %}",
+        type: 'GET',
+        success: function(response) {
+            $('.right-side').html(response);
+        },
+        error: function(xhr, status, error) {
+            console.error(xhr.responseText);
+        }
+    });
+});
+</script>
+
+</body>
+</html>
